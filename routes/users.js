@@ -35,6 +35,9 @@ router.delete("/:id", authenticate, (req, res) => {
 });
 
 router.get("/:id/export", authenticate, (req, res) => {
+  if (req.user.id !== req.params.id) {
+    return res.status(403).json({ error: "Forbidden: cannot export another user's data" });
+  }
   const user = users.find((u) => u.id === req.params.id);
   if (!user) return res.status(404).json({ error: "User not found" });
   res.json({
