@@ -37,6 +37,9 @@ router.post("/:transferId/approve", authenticate, (req, res) => {
 router.post("/:transferId/cancel", authenticate, (req, res) => {
   const transfer = transferRequests.find((t) => t.id === req.params.transferId);
   if (!transfer) return res.status(404).json({ error: "Transfer not found" });
+  if (transfer.requestedBy !== req.user.id) {
+    return res.status(403).json({ error: "Not authorized to cancel this transfer" });
+  }
   transfer.status = "cancelled";
   res.json({ success: true });
 });
